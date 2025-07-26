@@ -3,12 +3,18 @@ import pandas as pd
 import numpy as np
 import joblib
 
+# Load CSS styling
+with open("style.css") as f:
+    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+# Page config
 st.set_page_config(page_title="Breast Cancer Predictor", layout="centered")
 
+# Load model
 model = joblib.load("cancer_model.pkl")
-st.title("🔬 Breast Cancer Predictor")
 
-st.write("Choose how you'd like to input patient data:")
+st.markdown("<h1>🧬 Breast Cancer Classification</h1>", unsafe_allow_html=True)
+st.markdown("Predict whether a tumor is <b>Malignant 🔴</b> or <b>Benign 🟢</b> using the Breast Cancer Wisconsin dataset.", unsafe_allow_html=True)
 
 option = st.radio("Select input method:", ("Manual Entry", "Upload CSV"))
 
@@ -21,35 +27,32 @@ features = [
     'compactness_worst', 'concavity_worst', 'concave points_worst', 'symmetry_worst', 'fractal_dimension_worst'
 ]
 
-# Option 1: Manual entry
 if option == "Manual Entry":
-    st.subheader("Enter values for 30 features:")
+    st.subheader("🔢 Enter Patient Data:")
     input_values = []
-    for feature in features:
-        val = st.number_input(f"{feature.replace('_', ' ').title()}", min_value=0.0, format="%.5f")
-        input_values.append(val)
+    cols = st.columns(3)
+    for i, feature in enumerate(features):
+        with cols[i % 3]:
+            val = st.number_input(f"{feature.replace('_', ' ').title()}", min_value=0.0, format="%.5f")
+            input_values.append(val)
 
     if st.button("Predict"):
         input_data = np.array([input_values])
         prediction = model.predict(input_data)
         result = "🔴 Malignant" if prediction[0] == 1 else "🟢 Benign"
-        st.success(f"Prediction: {result}")
+        st.success(f"Prediction Result: {result}")
 
-# Option 2: Upload CSV
 else:
-    uploaded_file = st.file_uploader("Upload a CSV file with the 30 features", type=["csv"])
-    
+    uploaded_file = st.file_uploader("📄 Upload CSV with 30 features", type=["csv"])
     if uploaded_file is not None:
         try:
             df = pd.read_csv(uploaded_file)
-            st.write("📊 Uploaded Data Preview:", df.head())
-            
             if all(feature in df.columns for feature in features):
                 predictions = model.predict(df[features])
                 df["Prediction"] = ["Malignant 🔴" if p == 1 else "Benign 🟢" for p in predictions]
-                st.subheader("Results:")
+                st.success("✅ Prediction completed.")
                 st.write(df[["Prediction"]])
             else:
-                st.error("❌ CSV is missing some required columns.")
+                st.error("❌ Some required columns are missing in the CSV.")
         except Exception as e:
-            st.error(f"⚠️ Error reading file: {e}")
+            st.error(f"⚠️ Error: {e}")
