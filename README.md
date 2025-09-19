@@ -41,24 +41,11 @@ This project builds a machine learning model to predict whether a breast tumour 
 ## Project Structure
 
 breastcancerclassification/
-│
-├── data.csv # Dataset with features & labels
-├── breast_cancer_classifier.py # Code to train the model
-├── cancer_model.pkl # Trained model serialized
-├── app.py # Application code for making predictions
-├── requirements.txt # Python dependencies
-├── venv/ # Virtual environment (if included)
-└── (other files)
+- data.csv # Dataset with features & labels
+- breast_cancer_classifier.py # Code to train the model
+- cancer_model.pkl # Trained model serialized
+- app.py # Application code for making predictions
+- requirements.txt # Python dependencies
+- venv/ # Virtual environment (if included)
+  (other files)
 
-
----
-
-## Requirements
-
-- Python 3.x  
-- Libraries: listed in `requirements.txt` (e.g., scikit-learn, pandas, numpy, flask or other if used)  
-
-You can install dependencies via:
-
-```bash
-pip install -r requirements.txt
